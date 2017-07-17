@@ -1,20 +1,21 @@
 def dictionary(input_character):
     mapping={'a':'a@4A', 'b':'bB8', 'c':'cC', 'd':'dD','e':'e3€&E', 'f':'fF', 'g':'gG', 'h':'hH', 'i':'i1!I', 'l':'l|£L', 'm':'mM', 'n':'nN', 'p':'pP', 'q':'qQ', 'r':'rR', 's':'s5$S', 't':'t7T', 'u':'uU', 'v':'vV', 'z':'zZ', 'o':'o0O'}
-    return mapping.get(input_character,input_character)
+    return mapping.get(input_character,input_character) #this method return the dict entry for imput_character and input_character if there aren't any entry for it
 
 def generate(base):
     if base=='': yield base
     else:
         for character in dictionary(base[0]):
-            for rest in generate(base[1:]):
+            for rest in generate(base[1:]): 
                 yield character+rest
 
+#this function call the generate function to do permutations and add the result to passlist list, at the end write passlist in the output file
 def passgen(base):
     passlist=[]
-    for generated in generate(base):
-        generated = generated + "\n"
+    for generated in generate(base):    #call the function for permutations
+        generated = generated + "\n"    #add the newline character
         passlist.append(generated)
-    for record in passlist:
+    for record in passlist:             #this loop write entire passlist il the output file   
         outfilename.write(record)
 
 def years(base):
@@ -53,10 +54,23 @@ def pointedyears(base):
     for record in passlist:
         record = record + "\n"
         outfilename.write(record)
-        
-options = {'s':passgen,'y':years,'p':pointedyears,'S':'symbols','A':'all'}     
+
+def addsymbols(base):
+    passlist=[]
+    symb =['!','#','%','']
+    for generated in generate(base):
+        for startsymb in symb:
+            for endsymb in symb:
+                modified_record = startsymb+generated+endsymb
+                passlist.append(modified_record)
+    for record in passlist:
+        record = record + "\n"
+        outfilename.write(record)
+#this dict define the correlation between the user choice and the function to call         
+options = {'s':passgen,'y':years,'p':pointedyears,'S':addsymbols,'A':'all'} 
+
 def main():
-    select = str(input("Select a modifier: \ns for substitution\ny for years append\np for pointed years append\n"))
+    select = str(input("Select a modifier: \ns for substitution\ny for years append\np for pointed years append\nS for symbols add\n"))
     return select        
 
 ########### SCRIPT MAIN SECTION ##########
@@ -85,7 +99,7 @@ Year: Same as substitution with the add of a year ate the end of the word. User 
 print (title)
 Input_Name = input("Type a word ")
 filename = input("Type an output file name ")
-User_choice = main()
-outfilename = open(filename,"a")
-options[User_choice](Input_Name)
+User_choice = main() # call the function called main to prompt select menu
+outfilename = open(filename,"a") # The , "a" will append the output to the file
+options[User_choice](Input_Name) # the will become the name of the called function using the dict options at line 57
 outfilename.close()
