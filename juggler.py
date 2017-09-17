@@ -1,80 +1,84 @@
-def dictionary(input_character):
-    mapping={'a':'a@4A', 'b':'bB8', 'c':'cC', 'd':'dD','e':'e3€&E', 'f':'fF', 'g':'gG', 'h':'hH', 'i':'i1!I', 'l':'l|£L', 'm':'mM', 'n':'nN', 'p':'pP', 'q':'qQ', 'r':'rR', 's':'s5$S', 't':'t7T', 'u':'uU', 'v':'vV', 'z':'zZ', 'o':'o0O'}
-    return mapping.get(input_character,input_character) #this method return the dict entry for imput_character and input_character if there aren't any entry for it
+import argparse
 
-def generate(base):
-    if base=='': yield base
-    else:
-        for character in dictionary(base[0]):
-            for rest in generate(base[1:]): 
-                yield character+rest
 
-#this function call the generate function to do permutations and add the result to passlist list, at the end write passlist in the output file
-def passgen(base):
-    passlist=[]
-    for generated in generate(base):    #call the function for permutations
-        generated = generated + "\n"    #add the newline character
-        passlist.append(generated)
-    for record in passlist:             #this loop write entire passlist il the output file   
-        outfilename.write(record)
+class JugglerPassGen(object):
+    mapping = {'a': 'a@4A', 'b': 'bB8', 'c': 'cC', 'd': 'dD', 'e': 'e3€&E', 'f': 'fF', 'g': 'gG', 'h': 'hH',
+               'i': 'i1!I', 'l': 'l|£L', 'm': 'mM', 'n': 'nN', 'p': 'pP', 'q': 'qQ', 'r': 'rR', 's': 's5$S',
+               't': 't7T', 'u': 'uU', 'v': 'vV', 'z': 'zZ', 'o': 'o0O'}
+    divisor = {'.', '-', '_'}
 
-def years(base):
-    passlist=[]
-    year_start = int(input("Years range start at: "))
-    year_stop = int(input("Years range stop at: "))
-    for generated in generate(base):
-        for year in range(year_start,year_stop+1):
-            modified_record = generated+str(year)
-            passlist.append(modified_record)
-            year = year % 100
-            modified_record = generated+str('%02d'%year)
-            passlist.append(modified_record)
-    for record in passlist:
-        record = record + "\n"
-        outfilename.write(record)
+    def __init__(self, word):
+        self.word = word
 
-def pointedyears(base):
-    passlist=[]
-    year_start = int(input("Years range start at: "))
-    year_stop = int(input("Years range stop at: "))
-    divisor =['.','-','_']
-    for generated in generate(base):
-        for year in range(year_start,year_stop+1):
-            modified_record = generated+str(year)
-            passlist.append(modified_record)
-            for div in divisor:
-                modified_record = generated+div+str(year)
-                passlist.append(modified_record)
-            year = year % 100
-            modified_record = generated+str('%02d'%year)
-            passlist.append(modified_record)
-            for div in divisor:
-                modified_record = generated+div+str('%02d'%year)
-                passlist.append(modified_record)
-    for record in passlist:
-        record = record + "\n"
-        outfilename.write(record)
+    @staticmethod
+    def dictionary(input_character):
+        """
+        return an iterable based on dictionary and input_character
+        """
+        return JugglerPassGen.mapping.get(input_character, input_character)
 
-def addsymbols(base):
-    passlist=[]
-    symb =['!','#','%','']
-    for generated in generate(base):
-        for startsymb in symb:
-            for endsymb in symb:
-                modified_record = startsymb+generated+endsymb
-                passlist.append(modified_record)
-    for record in passlist:
-        record = record + "\n"
-        outfilename.write(record)
-#this dict define the correlation between the user choice and the function to call         
-options = {'s':passgen,'y':years,'p':pointedyears,'S':addsymbols,'A':'all'} 
+    @staticmethod
+    def generate(base):
+        """
+        Generate all possible combination with charters and their substitution of a word
+        """
+        if base == '':
+            yield base
+        else:
+            for character in JugglerPassGen.dictionary(base[0]):
+                for rest in JugglerPassGen.generate(base[1:]):
+                    yield character + rest
 
-def main():
-    select = str(input("Select a modifier: \ns for substitution\ny for years append\np for pointed years append\nS for symbols add\n"))
-    return select        
+    def password_generator(self):
+        """
+        Generate all possible password from a word using JugglerPassGen.generate method
+        """
+        password_list = []
+        for generated in JugglerPassGen.generate(self.word):  # call the function for permutations
+            password_list.append(generated)
+        return password_list
 
-########### SCRIPT MAIN SECTION ##########
-title ="""
+    def years(self):
+        """
+        Add years to results of JugglerPassGen.password_generator
+        """
+        password_list = []
+        year_start = int(input("Years range start at: "))
+        year_stop = int(input("Years range stop at: "))
+        for generated in JugglerPassGen.generate(self.word):
+            for year in range(year_start, year_stop + 1):
+                modified_record = generated + str(year)
+                password_list.append(modified_record)
+                year = year % 100
+                modified_record = generated + str('%02d' % year)
+                password_list.append(modified_record)
+        return password_list
+
+    def years_with_separator(self):
+        """
+        Add years to results of JugglerPassGen.password_generator and insert a separator between year and word
+        """
+        password_list = []
+        year_start = int(input("Years range start at: "))
+        year_stop = int(input("Years range stop at: "))
+        for generated in JugglerPassGen.generate(self.word):
+            for year in range(year_start, year_stop + 1):
+                modified_record = generated + str(year)
+                password_list.append(modified_record)
+                for div in JugglerPassGen.divisor:
+                    modified_record = generated + div + str(year)
+                    password_list.append(modified_record)
+                year = year % 100
+                modified_record = generated + str('%02d' % year)
+                password_list.append(modified_record)
+                for div in JugglerPassGen.divisor:
+                    modified_record = generated + div + str('%02d' % year)
+                    password_list.append(modified_record)
+        return password_list
+
+
+# SCRIPT MAIN SECTION
+title = """
    ___                   _           
   |_  |                 | |          
     | |_   _  __ _  __ _| | ___ _ __ 
@@ -92,14 +96,46 @@ title ="""
                     \____/|_|\_\\__,_|_.__/ \__, |
                                             __/ |
                                            |___/ 
-\nthis script modify words to generate valid password with some common pattern:\n\n\n
-Subtitution: Do a substitution of every character in the word with a similar number or symbols, this option also do lowercase to uppercase modification and vice versa
-Year: Same as substitution with the add of a year ate the end of the word. User can specify the years range. 
+ 
 """
-print (title)
-Input_Name = input("Type a word ")
-filename = input("Type an output file name ")
-User_choice = main() # call the function called main to prompt select menu
-outfilename = open(filename,"a") # The , "a" will append the output to the file
-options[User_choice](Input_Name) # the will become the name of the called function using the dict options at line 57
-outfilename.close()
+print(title)
+parser = argparse.ArgumentParser()
+parser.add_argument("words", nargs=1, help="Comma separated words")
+parser.add_argument("filename", nargs=1, help="Name of the output file")
+parser.add_argument("-p", "--password", action="store_true", help="Do only character substitution")
+parser.add_argument("-y", "--years", action="store_true", help="Do character substitution and year append")
+parser.add_argument("-s", "--separator", action="store_true", help="""Do character substitution, years append and insert
+                                                                  a separator between years and words""")
+args = parser.parse_args()
+filename = str(args.filename[0])
+output_filename = open(filename, "a")  # The ,"a" will append the output to the file
+list_of_words = args.words[0].split(",")
+generated_password = []
+
+if args.password:
+    for single_word in list_of_words:
+        print(list_of_words)
+        instanced_class = JugglerPassGen(single_word)
+        generated_password.extend(instanced_class.password_generator())
+    for record in generated_password:
+        record = record + "\n"
+        output_filename.write(record)
+if args.years:
+    for single_word in list_of_words:
+        years_instanced_class = JugglerPassGen(single_word)
+        generated_password.extend(years_instanced_class.years())
+    for record in generated_password:
+        record = record + "\n"
+        output_filename.write(record)
+if args.separator:
+    for single_word in list_of_words:
+        years_with_separator_instanced_class = JugglerPassGen(single_word)
+        generated_password.extend(years_with_separator_instanced_class.years_with_separator())
+    for record in generated_password:
+        record = record + "\n"
+        output_filename.write(record)
+elif args.password == args.years == args.separator == False:
+    print("Select an option, use -h for help")
+
+output_filename.close()
+exit()
