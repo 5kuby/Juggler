@@ -10,13 +10,14 @@ usage: juggler.py [-h] [-p] [-y] [-s] words filename
 
 positional arguments:
   words            Comma separated words
+  
   filename         Name of the output file
 
 optional arguments:
-  -h, --help      show this help message and exit
+  -h, --help:      show this help message and exit
   
-  -p, --password   Do only character substitution
+  -p, --password:   Do only character substitution
   
-  -y, --years      Do character substitution and year append
+  -y, --years:      Do character substitution and year append
   
-  -s, --separator  Do character substitution, years append and insert a separator between years and words
+  -s, --separator:  Do character substitution, years append and insert a separator between years and words
