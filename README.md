@@ -13,7 +13,7 @@ positional arguments:
   filename         Name of the output file
 
 optional arguments:
-  -h, --help       show this help message and exit
+  -h, --help      show this help message and exit
   
   -p, --password   Do only character substitution
   
