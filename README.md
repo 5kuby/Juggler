@@ -14,7 +14,9 @@ positional arguments:
 
 optional arguments:
   -h, --help       show this help message and exit
+  
   -p, --password   Do only character substitution
+  
   -y, --years      Do character substitution and year append
-  -s, --separator  Do character substitution, years append and insert a
-                   separator between years and words
+  
+  -s, --separator  Do character substitution, years append and insert a separator between years and words
