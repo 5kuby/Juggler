@@ -82,7 +82,7 @@ class JugglerPassGen(object):
 
 # SCRIPT MAIN SECTION
 title = """
-   ___                         _
+   ___                   _
   |_  |                 | |
     | |_   _  __ _  __ _| | ___ _ __
     | | | | |/ _` |/ _` | |/ _ \ '__|
@@ -91,9 +91,9 @@ title = """
               __/ | __/ |
              |___/ |___/
                             By
-                     _____ _              _
-                    |  ___| |             | |
-                    |___ \| | ___   _| |__  _        _
+                     _____ _          _
+                    |  ___| |        | |
+                    |___ \| | ___   _| |__  _   _
                         \ \ |/ / | | | '_ \| | | |
                     /\__/ /   <| |_| | |_) | |_| |
                     \____/|_|\_\\__,_|_.__/ \__, |
@@ -116,7 +116,6 @@ generated_password = []
 
 if args.password:
     for single_word in list_of_words:
-        print(list_of_words)
         instanced_class = JugglerPassGen(single_word)
         generated_password.extend(instanced_class.password_generator())
     for record in generated_password:
